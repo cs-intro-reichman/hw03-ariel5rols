@@ -38,22 +38,43 @@ public class LoanCalc {
 	* the number of periods (n), and epsilon, a tolerance level.
 	*/
 	// Side effect: modifies the class variable iterationCounter.
-    public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {  
-    	// Replace the following statement with your code
-    	return 0;
-    }
-    
-    /**
-	* Uses bisection search to compute an approximation of the periodical payment 
+	public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
+		double guess = loan / n;  // Initial guess for the periodical payment
+		double balance = endBalance(loan, rate, n, guess);
+		iterationCounter = 0;  // Reset the iteration counter
+	
+		while (balance > epsilon) {
+			guess += epsilon;  // Increase the guess by a small amount (epsilon)
+			balance = endBalance(loan, rate, n, guess);
+			iterationCounter++;  // Increment the iteration counter
+		}
+	
+		return guess;
+	}
+	
+	/**
+	* Uses bisection search to compute an approximation of the periodical payment
 	* that will bring the ending balance of a loan close to 0.
-	* Given: the sum of theloan, the periodical interest rate (as a percentage),
+	* Given: the sum of the loan, the periodical interest rate (as a percentage),
 	* the number of periods (n), and epsilon, a tolerance level.
 	*/
-	// Side effect: modifies the class variable iterationCounter.
-    public static double bisectionSolver(double loan, double rate, int n, double epsilon) {  
-    	// Replace the following statement with your code
-    	return 0;
-    }
+	public static double bisectionSolver(double loan, double rate, int n, double epsilon) {
+		double lowerBound = 0.0;
+		double upperBound = loan;  // Initial upper bound is the loan amount itself
+		double guess = (lowerBound + upperBound) / 2.0;
+		double balance = endBalance(loan, rate, n, guess);
+		iterationCounter = 0;  // Reset the iteration counter
+	
+		while (Math.abs(balance) > epsilon) {
+			if (balance > 0) {lowerBound = guess;} 
+			else {upperBound = guess;}
+			guess = (lowerBound + upperBound) / 2.0;
+			balance = endBalance(loan, rate, n, guess);
+			iterationCounter++;  // Increment the iteration counter
+		}
+	
+		return guess;
+	}
 	
 	/**
 	* Computes the ending balance of a loan, given the sum of the loan, the periodical
