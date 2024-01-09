@@ -38,41 +38,38 @@ public class LoanCalc {
 	* the number of periods (n), and epsilon, a tolerance level.
 	*/
 	// Side effect: modifies the class variable iterationCounter.
-	public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {
-		double guess = loan / n;  // Initial guess for the periodical payment
-		double balance = endBalance(loan, rate, n, guess);
-		iterationCounter = 0;  // Reset the iteration counter
-	
-		while (balance > epsilon) {
-			guess += epsilon;  // Increase the guess by a small amount (epsilon)
-			balance = endBalance(loan, rate, n, guess);
-			iterationCounter++;  // Increment the iteration counter
+    public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {  
+    	iterationCounter = 0;
+		double g = loan/n;
+		while (endBalance(loan,rate,n,g) >= epsilon) {
+			g += epsilon;
+			iterationCounter++;
 		}
-	
-		return guess;
+		return g;
 	}
-	
-	/**
-	* Uses bisection search to compute an approximation of the periodical payment
+
+    
+    /**
+	* Uses bisection search to compute an approximation of the periodical payment 
 	* that will bring the ending balance of a loan close to 0.
-	* Given: the sum of the loan, the periodical interest rate (as a percentage),
+	* Given: the sum of theloan, the periodical interest rate (as a percentage),
 	* the number of periods (n), and epsilon, a tolerance level.
 	*/
-	public static double bisectionSolver(double loan, double rate, int n, double epsilon) {
-		double lowerBound = 0.0;
-		double upperBound = loan;  // Initial upper bound is the loan amount itself
-		double guess = (lowerBound + upperBound) / 2.0;
-		double balance = endBalance(loan, rate, n, guess);
-		iterationCounter = 0;  // Reset the iteration counter
-	
-		while (Math.abs(balance) > epsilon) {
-			if (balance > 0) {lowerBound = guess;} 
-			else {upperBound = guess;}
-			guess = (lowerBound + upperBound) / 2.0;
-			balance = endBalance(loan, rate, n, guess);
-			iterationCounter++;  // Increment the iteration counter
+	// Side effect: modifies the class variable iterationCounter.
+	public static double bisectionSolver(double loan, double rate, int n, double epsilon) {  
+
+		double lowBound = 0; // Changed variable name L to lowBound
+		double highBound = loan; // Changed variable name H to highBound
+		double guess = (highBound + lowBound) / 2; // Changed variable name g to guess
+		while ((highBound - lowBound) > epsilon) {
+			if (endBalance(loan, rate, n, guess) * endBalance(loan, rate, n, lowBound) > 0) {
+				lowBound = guess;
+			} else {
+				highBound = guess;
+			}
+			guess = (highBound + lowBound) / 2;
+
 		}
-	
 		return guess;
 	}
 	
@@ -81,7 +78,12 @@ public class LoanCalc {
 	* interest rate (as a percentage), the number of periods (n), and the periodical payment.
 	*/
 	private static double endBalance(double loan, double rate, int n, double payment) {
-		// Replace the following statement with your code
-    	return 0;
+		double endingBalance = 0; 
+		double presentBalance = loan;
+		for (int i = 0; i < n; i++) {
+			endingBalance = (presentBalance - payment) * (1 + rate / 100);
+			presentBalance = endingBalance;
+		}
+		return endingBalance;
 	}
 }
