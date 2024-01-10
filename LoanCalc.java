@@ -5,7 +5,7 @@ public class LoanCalc {
 	
 	static double epsilon = 0.001;  // The computation tolerance (estimation error)
 	static int iterationCounter;    // Monitors the efficiency of the calculation
-	
+	static int guess = 0;
     /** 
      * Gets the loan data and computes the periodical payment.
      * Expects to get three command-line arguments: sum of the loan (double),
