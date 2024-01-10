@@ -5,7 +5,7 @@ public class LoanCalc {
 	
 	static double epsilon = 0.001;  // The computation tolerance (estimation error)
 	static int iterationCounter = 0;    // Monitors the efficiency of the calculation
-	static int guess = 0;
+	static int g = 0;
     /** 
      * Gets the loan data and computes the periodical payment.
      * Expects to get three command-line arguments: sum of the loan (double),
@@ -40,12 +40,12 @@ public class LoanCalc {
 	// Side effect: modifies the class variable iterationCounter.
     public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {  
     	iterationCounter = 0;
-		double guess = loan/n;
-		while (endBalance(loan,rate,n,guess) >= epsilon) {
-			guess += epsilon;
+		double g = loan/n;
+		while (endBalance(loan,rate,n,g) >= epsilon) {
+			g += epsilon;
 			iterationCounter++;
 		}
-		return guess;
+		return g;
 	}
 
     
@@ -56,34 +56,34 @@ public class LoanCalc {
 	* the number of periods (n), and epsilon, a tolerance level.
 	*/
 	// Side effect: modifies the class variable iterationCounter.
-	public static double bisectionSolver(double loan, double rate, int n, double epsilon) {  
-		int iterationCounter = 0;
-		double lowBound = 0; 
-		double highBound = loan; 
-		double guess = (highBound + lowBound) / 2; 
-		while ((highBound - lowBound) > epsilon) {
-			if (endBalance(loan, rate, n, guess) * endBalance(loan, rate, n, lowBound) > 0) {
-				lowBound = guess;
+    public static double bisectionSolver(double loan, double rate, int n, double epsilon) {  
+    	iterationCounter = 0;
+		double L = 0;
+		double H = loan;
+		double g = (H+L)/2;
+		while ((H - L) > epsilon) {
+			if (endBalance(loan,rate,n,g)*endBalance(loan,rate,n,L) > 0) {
+				L = g;
 			} else {
-				highBound = guess;
+				H = g;
 			}
-			guess = (highBound + lowBound) / 2;
+			g = (H+L)/2;
 			iterationCounter++;
 		}
-		return guess;
-	}
+		return g;
+    }
 	
 	/**
 	* Computes the ending balance of a loan, given the sum of the loan, the periodical
 	* interest rate (as a percentage), the number of periods (n), and the periodical payment.
 	*/
 	private static double endBalance(double loan, double rate, int n, double payment) {
-		double endingBalance = 0; 
-		double presentBalance = loan;
+		double endB = 0;
+		double presentB = loan;
 		for (int i = 0; i < n; i++) {
-			endingBalance = (presentBalance - payment) * (1 + rate / 100);
-			presentBalance = endingBalance;
+			endB = (presentB - payment)*(1+rate/100);
+			presentB = endB;
 		}
-		return endingBalance;
+		return endB;
 	}
 }
