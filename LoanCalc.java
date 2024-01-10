@@ -5,7 +5,7 @@ public class LoanCalc {
 	
 	static double epsilon = 0.001;  // The computation tolerance (estimation error)
 	static int iterationCounter = 0;    // Monitors the efficiency of the calculation
-	static int g = 0;
+	static int guess = 0;
     /** 
      * Gets the loan data and computes the periodical payment.
      * Expects to get three command-line arguments: sum of the loan (double),
@@ -40,12 +40,12 @@ public class LoanCalc {
 	// Side effect: modifies the class variable iterationCounter.
     public static double bruteForceSolver(double loan, double rate, int n, double epsilon) {  
     	iterationCounter = 0;
-		double g = loan/n;
-		while (endBalance(loan,rate,n,g) >= epsilon) {
-			g += epsilon;
+		double guess = loan/n;
+		while (endBalance(loan,rate,n,guess) >= epsilon) {
+			guess += epsilon;
 			iterationCounter++;
 		}
-		return g;
+		return guess;
 	}
 
     
@@ -58,19 +58,19 @@ public class LoanCalc {
 	// Side effect: modifies the class variable iterationCounter.
     public static double bisectionSolver(double loan, double rate, int n, double epsilon) {  
     	iterationCounter = 0;
-		double L = 0;
-		double H = loan;
-		double g = (H+L)/2;
-		while ((H - L) > epsilon) {
-			if (endBalance(loan,rate,n,g)*endBalance(loan,rate,n,L) > 0) {
-				L = g;
+		double low = 0;
+		double high = loan;
+		double guess = (high+low)/2;
+		while ((high - low) > epsilon) {
+			if (endBalance(loan,rate,n,guess)*endBalance(loan,rate,n,low) > 0) {
+				low = guess;
 			} else {
-				H = g;
+				high = guess;
 			}
-			g = (H+L)/2;
+			guess = (high+low)/2;
 			iterationCounter++;
 		}
-		return g;
+		return guess;
     }
 	
 	/**
@@ -78,12 +78,12 @@ public class LoanCalc {
 	* interest rate (as a percentage), the number of periods (n), and the periodical payment.
 	*/
 	private static double endBalance(double loan, double rate, int n, double payment) {
-		double endB = 0;
-		double presentB = loan;
+		double end_balance = 0;
+		double present_balance = loan;
 		for (int i = 0; i < n; i++) {
-			endB = (presentB - payment)*(1+rate/100);
-			presentB = endB;
+			end_balance = (present_balance - payment)*(1+rate/100);
+			present_balance = end_balance;
 		}
-		return endB;
+		return end_balance;
 	}
 }
